@@ -1,28 +1,28 @@
 <template>
   <div class="component-wrapper">
-    <h1>Zinsen berechnen:</h1>
+    <h1>Kapital</h1>
     <div class="field">
-      <label for="kapital">kapital:</label>
-      <input type="text" @input="setKap" v-model="kapital">
-      <div class="tooltip" v-if="showKap">{{msg}}</div>
-    </div>
-    <!-- this.persent -->
-    <div class="field">
-      <label for="prozentsatz">prozentsatz:</label>
+      <label for="satz">Prozentteil:</label>
       <input type="text" @input="setPercent" v-model="percent">
       <div class="tooltip" v-if="showPers">{{msg}}</div>
     </div>
+    <div class="field">
+      <label for="prozentsatz">Prozentsatz:</label>
+      <input type="text" @input="setSatz" v-model="satz"> %
+      <div class="tooltip" v-if="showSatz">{{msg}}</div>
+    </div>
+
+    <!-- попробовать v-for -->
     <input type="radio" id="tage" value="tage" v-model="termin">
     Tage
     <input type="radio" id="monate" value="monate" v-model="termin"> Monate
     <input type="radio" id="jahre" value="jahre" v-model="termin">
     Jahre
-    {{max}}
+    <!-- попробовать v-for -->
+
     <div class="field">
-      <label for="only-percent">percent</label>
-      <input type="checkbox" @click="sum = !sum">
       <div class="range-value" v-show="range !== 0">{{range}}</div>
-      <label for="prozentsatz">prozentsatz:</label>
+      <label for="prozentsatz">Zeit:</label>
       <input
         type="range"
         @input="setTime"
@@ -33,7 +33,8 @@
       >
     </div>
     <button class="btn" @click="getResult">berechnen</button>
-    <h2>Ergebniss(teil)</h2>
+    <h2>Ergebniss(Kapital)</h2>
+    <div class="expl">{{explanation}}</div>
     <div class="display">{{result}}</div>
   </div>
 </template>
@@ -41,26 +42,26 @@
 export default {
   data() {
     return {
-      kapital: "",
+      satz: "",
       percent: "",
-      kapitalNew: "",
       msg: null,
       flag: false,
-      min: "",
-      max: "",
-      range: 0,
+      min: 1,
+      max: 12,
+      range: 1,
       termin: "",
       pattern: /^[\d]{1,8}\.?[\d]{0,2}$/,
       showPers: false,
+      showSatz: false,
       showKap: false,
-      sum: false,
+      explanation: "",
       result: ""
     };
   },
   computed: {},
   methods: {
     setPercent(e) {
-      this.showKap = false;
+      this.showSatz = false;
       this.percent = this.validate(this.percent).trim();
       if (this.flag) {
         this.flag = false;
@@ -70,30 +71,33 @@ export default {
       }
     },
 
-    setKap(e) {
+    setSatz(e) {
       this.showPers = false;
-      this.kapital = this.validate(this.kapital).trim();
+      this.satz = this.validate(this.satz).trim();
+      console.log(1);
+
       if (this.flag) {
         this.flag = false;
-        this.showKap = true;
+        this.showSatz = true;
       } else {
-        this.showKap = false;
+        this.showSatz = false;
       }
     },
     setTime() {
       console.log(1);
     },
     /**
-     *  функция валидации даных для функций setKap и setPercent
+     *  функция валидации даных для функций setKap и setpercent
      * e -  событие input
      * str - значение ключа this.kap или this.persent (string)
      */
     validate(str) {
       let test = this.pattern.test(str);
+
       if (!test && str !== "") {
         str = str.slice(0, -1);
         this.msg = "только цифры!";
-        if (str.charAt(str.length - 4)) {
+        if (str.charAt(str.length - 4) === ".") {
           // Если после точки ставить больше 2 знаков - несоответствие шаблону и соответств. message
           this.msg = "не больше 2 знаков после точки";
         }
@@ -106,40 +110,31 @@ export default {
 
       return str;
     }, // validate
+
+    /**
+     *  переделать getResult для поиска капитала
+     */
     getResult() {
       if (this.range === 0) {
-        this.result =
-          (parseFloat(this.kapital) * parseFloat(this.percent)) / 100;
+        this.result = (parseFloat(this.percent) * 100) / parseFloat(this.satz);
       }
       if (this.termin === "tage") {
         this.result =
-          (parseInt(this.kapital) *
-            parseInt(this.percent) *
-            parseInt(this.range)) /
-          (100 * 360);
+          (parseInt(this.percent) * 36000) /
+          (parseInt(this.satz) * parseInt(this.range));
         this.result = parseFloat(this.result.toFixed(2));
       }
       if (this.termin === "monate") {
         this.result =
-          (parseFloat(this.kapital) *
-            parseFloat(this.percent) *
-            parseInt(this.range)) /
-          (100 * 12);
+          (parseInt(this.percent) * 1200) /
+          (parseInt(this.satz) * parseInt(this.range));
         this.result = parseFloat(this.result.toFixed(2));
       }
       if (this.termin === "jahre") {
-        let kapital = 1 + parseFloat(this.percent) / 100;
-        kapital = Math.pow(kapital, this.range);
-        this.kapitalNew = kapital * this.kapital;
-        console.log(kapital);
-        if (!this.sum) {
-          this.result = parseFloat(this.kapitalNew).toFixed(2);
-          console.log(1);
-        } else {
-          console.log(2);
-
-          this.result = parseFloat(this.kapitalNew - this.kapital).toFixed(2);
-        }
+        this.explanation =
+          "такое количество денег нужно вложить, чтобы получить введенную сумму";
+        let nenner = (1 + this.satz / 100) ** this.range;
+        this.result = (this.percent / nenner).toFixed(2);
       }
     }
   }
@@ -163,25 +158,11 @@ input[type="text"] {
   justify-content: space-between;
   width: 150px;
   margin: 20px auto;
-  position: relative;
 }
 .btn {
   position: relative;
   left: 50%;
   transform: translateX(-50%);
 }
-.range-value {
-  position: absolute;
-  top: -50px;
-  right: -80px;
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 50%;
-  background-color: #cee;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 800;
-  text-align: center;
-}
 </style>
+

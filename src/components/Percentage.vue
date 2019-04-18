@@ -1,20 +1,138 @@
 <template>
   <div class="component-wrapper">
-    <h1>Prozentsatz berechnen:</h1>
+    <h1>prozentsatz</h1>
     <div class="field">
-      <label for="kapital">kapital:</label>
-      <input type="text">
+      <label for="kapital">Kapital:</label>
+      <input type="text" @input="setKap" v-model="kapital">
+      <div class="tooltip" v-if="showKap">{{msg}}</div>
     </div>
     <div class="field">
-      <label for="prozentsatz">Zinsen:</label>
-      <input type="text">
+      <label for="prozentsatz">Prozentteil:</label>
+      <!--TODO сделать динамический заголовок, если termin = jahre, то здесь будет Neues Kapital-->
+      <input type="text" @input="setPercent" v-model="percent">
+      <div class="tooltip" v-if="showPers">{{msg}}</div>
     </div>
-    <button class="btn">berechnen</button>
-    <h2>Ergebniss</h2>
-    <div class="display"></div>
+    <input type="radio" id="tage" value="tage" v-model="termin">
+    Tage
+    <input type="radio" id="monate" value="monate" v-model="termin"> Monate
+    <input type="radio" id="jahre" value="jahre" v-model="termin">
+    Jahre
+    {{max}}
+    <div class="field">
+      <div class="range-value" v-show="range !== 0">{{range}}</div>
+      <label for="prozentsatz">Prozentsatz:</label>
+      <input
+        type="range"
+        @input="setTime"
+        :min="termin === 'tage' ? 30 : 1"
+        :max="termin == 'tage' ? 360 : termin === 'jahre' ? 30 : 12"
+        v-show="termin!==''"
+        v-model="range"
+      >
+    </div>
+    <button class="btn" @click="getResult">berechnen</button>
+    <h2>Ergebniss(prozentsatz)</h2>
+    <div class="display">{{result}}</div>
   </div>
 </template>
-<script></script>
+<script>
+export default {
+  data() {
+    return {
+      kapital: null,
+      percent: null,
+      kapitalNew: "",
+      msg: null,
+      flag: false,
+      min: "",
+      max: "",
+      range: 0,
+      termin: "",
+      pattern: /^[\d]{1,8}\.?[\d]{0,2}$/,
+      showPers: false,
+      showKap: false,
+      result: ""
+    };
+  },
+  computed: {},
+  methods: {
+    setPercent(e) {
+      this.showKap = false;
+      this.percent = this.validate(this.percent).trim();
+      if (this.flag) {
+        this.flag = false;
+        this.showPers = true;
+      } else {
+        this.showPers = false;
+      }
+    },
+
+    setKap(e) {
+      this.showPers = false;
+      this.kapital = this.validate(this.kapital).trim();
+      if (this.flag) {
+        this.flag = false;
+        this.showKap = true;
+      } else {
+        this.showKap = false;
+      }
+    },
+    setTime() {
+      console.log(1);
+    },
+    /**
+     *  функция валидации даных для функций setKap и setpercent
+     * e -  событие input
+     * str - значение ключа this.kap или this.persent (string)
+     */
+    validate(str) {
+      let test = this.pattern.test(str);
+      if (!test && str !== "") {
+        str = str.slice(0, -1);
+        this.msg = "только цифры!";
+        if (str.charAt(str.length - 4)) {
+          // Если после точки ставить больше 2 знаков - несоответствие шаблону и соответств. message
+          this.msg = "не больше 2 знаков после точки";
+        }
+        if (str.length >= 8) {
+          this.msg = "не больше 8";
+        }
+
+        this.flag = true;
+      }
+
+      return str;
+    }, // validate
+    getResult() {
+      if (this.range === 0) {
+        this.result =
+          (parseFloat(this.percent) * 100) / parseFloat(this.kapital);
+      }
+
+      if (this.termin === "tage") {
+        this.result =
+          (parseInt(this.percent) * 36000) /
+          (parseInt(this.kapital) * parseInt(this.range));
+        this.result = parseFloat(this.result.toFixed(2));
+      }
+
+      if (this.termin === "monate") {
+        this.result =
+          (parseInt(this.percent) * 1200) /
+          (parseInt(this.kapital) * parseInt(this.range));
+        this.result = parseFloat(this.result.toFixed(2));
+      }
+
+      if (this.termin === "jahre") {
+        // this.result = this.percent / 100;
+        let kap = parseInt(this.percent) / parseInt(this.kapital);
+        let power = (kap ** (1 / parseInt(this.range)) - 1) * 100;
+        this.percent = parseInt(this.percent);
+      }
+    }
+  }
+};
+</script>
 <style lang="scss" scoped>
 h1,
 h2 {

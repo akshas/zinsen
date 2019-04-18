@@ -13,7 +13,7 @@
       ></start-page>
       <find-percent v-if="state === 'percent'"></find-percent>
       <find-percentage v-if="state === 'percentage'"></find-percentage>
-      <find-sum v-if="state === 'sum'"></find-sum>
+      <find-capital v-if="state === 'sum'"></find-capital>
     </div>
   </div>
 </template>
