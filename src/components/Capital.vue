@@ -1,28 +1,49 @@
 <template>
   <div class="component-wrapper">
     <h1>Kapital</h1>
-    <div class="field">
-      <label for="satz">Prozentteil:</label>
-      <input type="text" @input="setPercent" v-model="percent">
-      <div class="tooltip" v-if="showPers">{{msg}}</div>
+    <div class="input-text-wrapper">
+      <div class="field text-input">
+        <label class="input-title" for="satz">Prozentteil:</label>
+        <input type="text" @focus="erseMsg" @input="setPercent" v-model="percent">
+        <div class="tooltip" v-if="showPers">{{msg}}</div>
+      </div>
+      <div class="field text-input">
+        <label class="input-title" for="prozentsatz">Prozentsatz:</label>
+        <input type="text" @focus="erseMsg" @input="setSatz" v-model="satz">
+        <div class="tooltip" v-if="showSatz">{{msg}}</div>
+      </div>
+      <div class="common-msg" v-if="showMsg">{{msg}}</div>
     </div>
-    <div class="field">
-      <label for="prozentsatz">Prozentsatz:</label>
-      <input type="text" @input="setSatz" v-model="satz"> %
-      <div class="tooltip" v-if="showSatz">{{msg}}</div>
+    <!-- попробовать v-for -->
+    <!-- Radios -->
+    <div class="field radios">
+      <div class="radio">
+        <label class="container">
+          Tage
+          <input type="radio" id="tage" value="tage" v-model="termin">
+          <span class="checkmark"></span>
+        </label>
+      </div>
+
+      <div class="radio">
+        <label class="container">
+          Monate
+          <input type="radio" id="monate" value="monate" v-model="termin">
+          <span class="checkmark"></span>
+        </label>
+      </div>
+      <div class="radio">
+        <label class="container">
+          Jahre
+          <input type="radio" id="jahre" value="jahre" v-model="termin">
+          <span class="checkmark"></span>
+        </label>
+      </div>
     </div>
-
+    <!-- /.radios -->
     <!-- попробовать v-for -->
-    <input type="radio" id="tage" value="tage" v-model="termin">
-    Tage
-    <input type="radio" id="monate" value="monate" v-model="termin"> Monate
-    <input type="radio" id="jahre" value="jahre" v-model="termin">
-    Jahre
-    <!-- попробовать v-for -->
-
-    <div class="field">
+    <div class="field range">
       <div class="range-value" v-show="range !== 0">{{range}}</div>
-      <label for="prozentsatz">Zeit:</label>
       <input
         type="range"
         @input="setTime"
@@ -35,7 +56,9 @@
     <button class="btn" @click="getResult">berechnen</button>
     <h2>Ergebniss(Kapital)</h2>
     <div class="expl">{{explanation}}</div>
-    <div class="display">{{result}}</div>
+    <div class="display">
+      <div class="result">{{result}}</div>
+    </div>
   </div>
 </template>
 <script>
@@ -48,12 +71,13 @@ export default {
       flag: false,
       min: 1,
       max: 12,
-      range: 1,
+      range: 0,
       termin: "",
       pattern: /^[\d]{1,8}\.?[\d]{0,2}$/,
       showPers: false,
       showSatz: false,
       showKap: false,
+      showMsg: false,
       explanation: "",
       result: ""
     };
@@ -83,6 +107,11 @@ export default {
         this.showSatz = false;
       }
     },
+    erseMsg() {
+      this.showMsg = false;
+      this.showSatz = false;
+      this.showKap = false;
+    },
     setTime() {
       console.log(1);
     },
@@ -99,7 +128,7 @@ export default {
         this.msg = "только цифры!";
         if (str.charAt(str.length - 4) === ".") {
           // Если после точки ставить больше 2 знаков - несоответствие шаблону и соответств. message
-          this.msg = "не больше 2 знаков после точки";
+          this.msg = "2 знака после точки!";
         }
         if (str.length >= 8) {
           this.msg = "не больше 8";
@@ -115,6 +144,11 @@ export default {
      *  переделать getResult для поиска капитала
      */
     getResult() {
+      if (this.kapital == "" || this.percent == "") {
+        this.msg = "заполните все поля!";
+        this.showMsg = true;
+        return;
+      }
       if (this.range === 0) {
         this.result = (parseFloat(this.percent) * 100) / parseFloat(this.satz);
       }
@@ -147,18 +181,18 @@ h2 {
   margin-top: 20px;
   margin-bottom: 20px;
 }
-input[type="text"] {
-  width: 40px;
-  border: 1px solid black;
-  outline: none;
-  padding: 5px;
-}
-.field {
-  display: flex;
-  justify-content: space-between;
-  width: 150px;
-  margin: 20px auto;
-}
+// input[type="text"] {
+//   width: 40px;
+//   border: 1px solid black;
+//   outline: none;
+//   padding: 5px;
+// }
+// .field {
+//   display: flex;
+//   justify-content: space-between;
+//   width: 150px;
+//   margin: 20px auto;
+// }
 .btn {
   position: relative;
   left: 50%;

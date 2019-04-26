@@ -1,26 +1,48 @@
 <template>
   <div class="component-wrapper">
     <h1>prozentsatz</h1>
-    <div class="field">
-      <label for="kapital">Kapital:</label>
-      <input type="text" @input="setKap" v-model="kapital">
-      <div class="tooltip" v-if="showKap">{{msg}}</div>
+    <div class="input-text-wrapper">
+      <div class="field text-input">
+        <label>Kapital:</label>
+        <input type="text" @focus="erseMsg" @input="setKap" v-model="kapital">
+        <div class="tooltip" v-if="showKap">{{msg}}</div>
+      </div>
+      <div class="field text-input">
+        <label>Prozentteil:</label>
+        <!--TODO сделать динамический заголовок, если termin = jahre, то здесь будет Neues Kapital-->
+        <input type="text" @focus="erseMsg" @input="setPercent" v-model="percent">
+        <div class="tooltip" v-if="showPers">{{msg}}</div>
+      </div>
+      <div class="common-msg" v-if="showMsg">{{msg}}</div>
     </div>
-    <div class="field">
-      <label for="prozentsatz">Prozentteil:</label>
-      <!--TODO сделать динамический заголовок, если termin = jahre, то здесь будет Neues Kapital-->
-      <input type="text" @input="setPercent" v-model="percent">
-      <div class="tooltip" v-if="showPers">{{msg}}</div>
+    <!-- Radios -->
+    <div class="field radios">
+      <div class="radio">
+        <label class="container">
+          Tage
+          <input type="radio" id="tage" value="tage" v-model="termin">
+          <span class="checkmark"></span>
+        </label>
+      </div>
+
+      <div class="radio">
+        <label class="container">
+          Monate
+          <input type="radio" id="monate" value="monate" v-model="termin">
+          <span class="checkmark"></span>
+        </label>
+      </div>
+      <div class="radio">
+        <label class="container">
+          Jahre
+          <input type="radio" id="jahre" value="jahre" v-model="termin">
+          <span class="checkmark"></span>
+        </label>
+      </div>
     </div>
-    <input type="radio" id="tage" value="tage" v-model="termin">
-    Tage
-    <input type="radio" id="monate" value="monate" v-model="termin"> Monate
-    <input type="radio" id="jahre" value="jahre" v-model="termin">
-    Jahre
-    {{max}}
-    <div class="field">
+    <!-- /.radios -->
+    <div class="field range">
       <div class="range-value" v-show="range !== 0">{{range}}</div>
-      <label for="prozentsatz">Prozentsatz:</label>
       <input
         type="range"
         @input="setTime"
@@ -39,11 +61,12 @@
 export default {
   data() {
     return {
-      kapital: null,
-      percent: null,
+      kapital: "",
+      percent: "",
       kapitalNew: "",
       msg: null,
       flag: false,
+      showMsg: false,
       min: "",
       max: "",
       range: 0,
@@ -77,6 +100,11 @@ export default {
         this.showKap = false;
       }
     },
+    erseMsg() {
+      this.showMsg = false;
+      this.showSatz = false;
+      this.showKap = false;
+    },
     setTime() {
       console.log(1);
     },
@@ -92,7 +120,7 @@ export default {
         this.msg = "только цифры!";
         if (str.charAt(str.length - 4)) {
           // Если после точки ставить больше 2 знаков - несоответствие шаблону и соответств. message
-          this.msg = "не больше 2 знаков после точки";
+          this.msg = "2 знака после точки!";
         }
         if (str.length >= 8) {
           this.msg = "не больше 8";
@@ -104,6 +132,11 @@ export default {
       return str;
     }, // validate
     getResult() {
+      if (this.kapital == "" || this.percent == "") {
+        this.msg = "заполните все поля!";
+        this.showMsg = true;
+        return;
+      }
       if (this.range === 0) {
         this.result =
           (parseFloat(this.percent) * 100) / parseFloat(this.kapital);
@@ -124,10 +157,11 @@ export default {
       }
 
       if (this.termin === "jahre") {
-        // this.result = this.percent / 100;
-        let kap = parseInt(this.percent) / parseInt(this.kapital);
+        let kap =
+          (parseInt(this.percent) + parseInt(this.kapital)) / this.kapital;
         let power = (kap ** (1 / parseInt(this.range)) - 1) * 100;
-        this.percent = parseInt(this.percent);
+        // this.percent = parseInt(this.percent);
+        this.result = parseFloat(power.toFixed(2));
       }
     }
   }
@@ -140,18 +174,18 @@ h2 {
   margin-top: 20px;
   margin-bottom: 20px;
 }
-input[type="text"] {
-  width: 40px;
-  border: 1px solid black;
-  outline: none;
-  padding: 5px;
-}
-.field {
-  display: flex;
-  justify-content: space-between;
-  width: 150px;
-  margin: 20px auto;
-}
+// input[type="text"] {
+//   width: 40px;
+//   border: 1px solid black;
+//   outline: none;
+//   padding: 5px;
+// }
+// .field {
+//   display: flex;
+//   justify-content: space-between;
+//   width: 150px;
+//   margin: 20px auto;
+// }
 .btn {
   position: relative;
   left: 50%;
