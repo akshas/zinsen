@@ -1,23 +1,24 @@
 <template>
   <div class="component-wrapper">
-    <!-- <div class="buttons">
-      <button class="btn" @click="$emit('zinsen')">Zinsen berechnen</button>
-      <button class="btn" @click="$emit('satz')">Prozentsatz berechnen</button>
-      <button class="btn" @click="$emit('kapital')">gefordertes Kapital berechnen</button>
-    </div>-->
     <div class="boxes">
-      <div class="box" @click="$emit('zinsen')">
-        <img src="../assets/percent.png" alt="home">
-        <div class="title">Zinsen</div>
-      </div>
-      <div class="box" @click="$emit('kapital')">
-        <img src="../assets/capital.png" alt="home">
-        <div class="title">Capital</div>
-      </div>
-      <div class="box" @click="$emit('satz')">
-        <img src="../assets/percentage.png" alt="home">
-        <div class="title">Percentage</div>
-      </div>
+      <router-link to="/zinsen" class="link">
+        <div class="box" @click="$emit('zinsen')">
+          <img src="../assets/percent.png" alt="home">
+          <div class="title">Zinsen</div>
+        </div>
+      </router-link>
+      <router-link to="/capital">
+        <div class="box" @click="$emit('kapital')">
+          <img src="../assets/capital.png" alt="home">
+          <div class="title">Capital</div>
+        </div>
+      </router-link>
+      <router-link to="/percentage">
+        <div class="box" @click="$emit('satz')">
+          <img src="../assets/percentage.png" alt="home">
+          <div class="title">Percentage</div>
+        </div>
+      </router-link>
     </div>
   </div>
 </template>

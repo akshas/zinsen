@@ -1,32 +1,26 @@
 <!--<img src="./assets/logo.png">-->
+
 <template>
   <div id="app">
     <div class="wrapper">
       <div class="menu">
-        <img src="./assets/Home.png" alt="percent calculate" width="30" @click="start">
+        <router-link to="/">
+          <img src="./assets/Home.png" alt="percent calculate" width="30" @click="start">
+        </router-link>
         <img src="./assets/information.png" alt="information" width="30" @click="info">
         <!-- TODO запилить компонент инфо-->
       </div>
-      <start-page
-        v-if="state === 'start'"
-        @zinsen="state = 'percent'"
-        @satz="state = 'percentage'"
-        @kapital="state = 'sum'"
-      ></start-page>
-      <find-percent v-if="state === 'percent'"></find-percent>
-      <find-percentage v-if="state === 'percentage'"></find-percentage>
-      <find-capital v-if="state === 'sum'"></find-capital>
+      <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script>
+// TODO убрать все логи
 export default {
   name: "app",
   data() {
-    return {
-      state: "start"
-    };
+    return {};
   },
   methods: {
     start() {
@@ -56,11 +50,12 @@ h1 {
 /** WRAPPERS*/
 .wrapper {
   position: absolute;
+  // TODO разобраться с размером врапера
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   min-width: 650px;
-  min-height: 100vh;
+  height: 650px;
   background-color: #fff;
   padding: 20px;
 }

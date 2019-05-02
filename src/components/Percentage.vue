@@ -9,7 +9,7 @@
       </div>
       <div class="field text-input">
         <label>Prozentteil:</label>
-        <!--TODO сделать динамический заголовок, если termin = jahre, то здесь будет Neues Kapital-->
+          <!--TODO сделать динамический заголовок, если termin = jahre, то здесь будет Neues Kapital-->
         <input type="text" @focus="erseMsg" @input="setPercent" v-model="percent">
         <div class="tooltip" v-if="showPers">{{msg}}</div>
       </div>
@@ -157,6 +157,13 @@ export default {
       }
 
       if (this.termin === "jahre") {
+        /**
+         * TODO нужно * prozentteil * поменять на neues Kapital
+         * (прцентная часть становиться больше первоночально вложенноо капитала)
+         *  получается что часть становиться новым капиталом
+         * в формуле его нужно делить на * kapital *
+         **/
+
         let kap =
           (parseInt(this.percent) + parseInt(this.kapital)) / this.kapital;
         let power = (kap ** (1 / parseInt(this.range)) - 1) * 100;
