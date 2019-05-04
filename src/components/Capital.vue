@@ -42,16 +42,10 @@
     </div>
     <!-- /.radios -->
     <!-- попробовать v-for -->
-    <div class="field range">
-      <div class="range-value" v-show="range !== 0">{{range}}</div>
-      <input
-        type="range"
-        @input="setTime"
-        :min="termin === 'tage' ? 30 : 1"
-        :max="termin == 'tage' ? 360 : termin === 'jahre' ? 30 : 12"
-        v-show="termin!==''"
-        v-model="range"
-      >
+    <div class="field range" v-show="termin!==''">
+      <div class="range-value" v-if="range !== 0">{{range}}</div>
+      <div class="range-value" v-else>{{getVal.min}}</div>
+      <input type="range" @input="setTime" :min="getVal.min" :max="getVal.max" v-model="range">
     </div>
     <button class="btn" @click="getResult">berechnen</button>
     <h2>Ergebniss(Kapital)</h2>
@@ -69,11 +63,11 @@ export default {
       percent: "",
       msg: null,
       flag: false,
-      min: 1,
-      max: 12,
+      min: "",
+      max: "",
       range: 0,
       termin: "",
-      pattern: /^[\d]{1,8}\.?[\d]{0,2}$/,
+      pattern: /^[\d]{1,6}\.?[\d]{0,2}$/,
       showPers: false,
       showSatz: false,
       showKap: false,
@@ -82,7 +76,27 @@ export default {
       result: ""
     };
   },
-  computed: {},
+  computed: {
+    getVal() {
+      this.range = 0;
+      if (this.termin === "jahre") {
+        this.min = 1;
+        this.max = 30;
+      }
+      if (this.termin === "monate") {
+        this.min = 1;
+        this.max = 12;
+      }
+      if (this.termin === "tage") {
+        this.min = 30;
+        this.max = 360;
+      }
+      return {
+        min: this.min,
+        max: this.max
+      };
+    }
+  },
   methods: {
     setPercent(e) {
       this.showSatz = false;

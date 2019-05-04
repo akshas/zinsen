@@ -55,7 +55,7 @@ h1 {
   left: 50%;
   transform: translate(-50%, -50%);
   min-width: 650px;
-  height: 650px;
+  height: 95vh;
   background-color: #fff;
   padding: 20px;
 }
@@ -65,6 +65,7 @@ h1 {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
+  height: 90vh;
 }
 .field {
   display: flex;
