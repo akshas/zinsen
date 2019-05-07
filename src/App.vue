@@ -65,11 +65,10 @@ h1 {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  height: 90vh;
 }
 .field {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: 350px;
   margin: 10px auto;
   position: relative;
@@ -93,7 +92,8 @@ h1 {
 /** INPUT TYPE=TEXT */
 .input-text-wrapper {
   display: flex;
-  flex-wrap: wrap;
+  // flex-wrap: wrap;
+  justify-content: center;
   position: relative;
   .common-msg {
     position: absolute;
@@ -103,22 +103,30 @@ h1 {
     color: red;
   }
 }
+.text-input {
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  label {
+    width: 145px;
+  }
+}
 .input-title {
   font-weight: bold;
-  font-size: 18px;
+  font-size: 12px;
 }
 input {
-  background-color: #faeec5;
-  border: transparent;
+text-align: center;
+  border: 3px solid darkred;
   outline: none;
   padding: 5px;
 }
 input[type="text"] {
   width: 145px;
+  height: 65px;
   font-size: 18px;
-  height: 35px;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 2px;
 }
 
 /** INPUT TYPE=RADIO */

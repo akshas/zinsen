@@ -78,7 +78,6 @@ export default {
   },
   computed: {
     getVal() {
-      this.range = 0;
       if (this.termin === "jahre") {
         this.min = 1;
         this.max = 30;
@@ -91,6 +90,7 @@ export default {
         this.min = 30;
         this.max = 360;
       }
+      this.range = this.min;
       return {
         min: this.min,
         max: this.max
